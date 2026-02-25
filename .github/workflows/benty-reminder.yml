@@ -2,8 +2,8 @@ name: Benty Fields Daily Reminder
 
 on:
   schedule:
-    # Runs daily at 08:00 UTC. Update this cron to match your timezone.
-    - cron: "0 8 * * *"
+    # 07:30 CET daily (06:30 UTC). GitHub cron uses UTC.
+    - cron: "30 6 * * *"
   workflow_dispatch:
     inputs:
       recipient:
@@ -15,6 +15,13 @@ jobs:
   send-email:
     runs-on: ubuntu-latest
     steps:
+      - name: Build today's Benty URL
+        id: benty
+        run: |
+          TODAY_CET="$(TZ='Europe/Paris' date +%F)"
+          echo "today_cet=${TODAY_CET}" >> "$GITHUB_OUTPUT"
+          echo "daily_url=https://www.benty-fields.com/daily_arXiv_results?date=${TODAY_CET}" >> "$GITHUB_OUTPUT"
+
       - name: Send reminder email
         uses: dawidd6/action-send-mail@v3
         with:
@@ -28,9 +35,9 @@ jobs:
           from: Benty Reminder Bot <${{ secrets.GMAIL_USER }}>
           html_body: |
             <p>Hi Alexander,</p>
-            <p>New papers are available for today.</p>
+            <p>New papers are available for today (<strong>${{ steps.benty.outputs.today_cet }}</strong>).</p>
             <div style="margin: 20px 0;">
-              <a href="https://www.benty-fields.com/daily_arXiv"
+              <a href="${{ steps.benty.outputs.daily_url }}"
                  style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">
                  View Papers
               </a>
