@@ -1,0 +1,42 @@
+name: Benty Fields Daily Reminder
+
+on:
+  schedule:
+    # Runs daily at 08:00 UTC. Update this cron to match your timezone.
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+    inputs:
+      recipient:
+        description: "Optional test recipient email (overrides RECIPIENT_EMAIL secret for this run only)"
+        required: false
+        type: string
+
+jobs:
+  send-email:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send reminder email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.GMAIL_USER }}
+          password: ${{ secrets.GMAIL_PASSWORD }}
+          subject: ${{ github.event_name == 'workflow_dispatch' && 'TEST: New papers are available!' || 'New papers are available!' }}
+          to: ${{ github.event.inputs.recipient || secrets.RECIPIENT_EMAIL }}
+          from: Benty Reminder Bot <${{ secrets.GMAIL_USER }}>
+          html_body: |
+            <p>Hi Alexander,</p>
+            <p>New papers are available for today.</p>
+            <div style="margin: 20px 0;">
+              <a href="https://www.benty-fields.com/daily_arXiv"
+                 style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                 View Papers
+              </a>
+            </div>
+            <p>Enjoy reading the newest publications.</p>
+            <hr>
+            <p style="font-size: 0.8em; color: grey;">
+              This is your DIY Benty Fields notification via GitHub Actions.
+            </p>

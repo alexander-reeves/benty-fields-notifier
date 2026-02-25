@@ -1,0 +1,19 @@
+# macOS
+.DS_Store
+
+# IDE/editor
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Environment/local secrets
+.env
+.env.*
+
+# Python cache (safe to ignore even if unused)
+__pycache__/
+*.pyc
