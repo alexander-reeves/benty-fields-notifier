@@ -2,8 +2,8 @@ name: Benty Fields Daily Reminder
 
 on:
   schedule:
-    # 07:30 CET daily (06:30 UTC). GitHub cron uses UTC.
-    - cron: "30 6 * * *"
+    # 07:30 CET on weekdays only (06:30 UTC). GitHub cron uses UTC.
+    - cron: "30 6 * * 1-5"
   workflow_dispatch:
     inputs:
       recipient:
@@ -34,8 +34,8 @@ jobs:
           to: ${{ github.event.inputs.recipient || secrets.RECIPIENT_EMAIL }}
           from: Benty Reminder Bot <${{ secrets.GMAIL_USER }}>
           html_body: |
-            <p>Hi Alexander,</p>
-            <p>New papers are available for today (<strong>${{ steps.benty.outputs.today_cet }}</strong>).</p>
+            <p>Dear esteemed cosmology researcher,</p>
+            <p>I hope this email finds you well. New papers are available for today (<strong>${{ steps.benty.outputs.today_cet }}</strong>).</p>
             <div style="margin: 20px 0;">
               <a href="${{ steps.benty.outputs.daily_url }}"
                  style="background-color: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">
